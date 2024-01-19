@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>After School</title>
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+    <!-- Vuejs CDN -->
+    <script
+      src="https://kit.fontawesome.com/b59b4a7b62.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- fontawesome CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <!-- bootstrap CSS CDN -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Local CSS link -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <!-- bootstrap JavaScript CDN -->
+    <!-- <script src="lessons.js"></script> -->
+  </head>
+  <body>
+    <div id="app" class="pt-3 pe-4 ms-5">
+      <header class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h1>After School Lesson</h1>
+        </div>
+        <div>
+          <div
+            class="d-flex justify-content-between align-items-center mb-3 gap-3"
+          >
+            <div class="custom-control custom-radio">
+              <input
+                type="radio"
+                id="customRadio1"
+                name="customRadio"
+                class="custom-control-input"
+                value="title"
+                v-model="sortCategory"
+              />
+              <label class="custom-control-label" for="customRadio1"
+                >Subject</label
+              >
+            </div>
+            <div class="custom-control custom-radio">
+              <input
+                type="radio"
+                id="customRadio2"
+                name="customRadio"
+                class="custom-control-input"
+                value="location"
+                v-model="sortCategory"
+              />
+              <label class="custom-control-label" for="customRadio2"
+                >Location</label
+              >
+            </div>
+            <div class="custom-control custom-radio">
+              <input
+                type="radio"
+                id="customRadio3"
+                name="customRadio"
+                class="custom-control-input"
+                value="price"
+                v-model="sortCategory"
+              />
+              <label class="custom-control-label" for="customRadio3"
+                >Price</label
+              >
+            </div>
+            <div class="custom-control custom-radio">
+              <input
+                type="radio"
+                id="customRadio4"
+                name="customRadio"
+                class="custom-control-input"
+                value="availability"
+                v-model="sortCategory"
+              />
+              <label class="custom-control-label" for="customRadio4"
+                >Availability</label
+              >
+            </div>
+          </div>
+          <div class="d-flex gap-3">
+            <button class="btn btn-primary" v-on:click="sortAscending">
+              Ascending Order
+            </button>
+            <button class="btn btn-primary" v-on:click="sortDescending">
+              Decending Order
+            </button>
+          </div>
+        </div>
+        <div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search..."
+            v-model="searchTerm"
+          />
+        </div>
+        <div>
+          <button class="disabledBtn" disabled v-if="isCheckoutDisabled">
+            <i class="fa-solid fa-cart-shopping position-relative">
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                >{{cartItemCount}}</span
+              >
+            </i>
+            <span>Checkout</span>
+          </button>
+          <button class="btn btn-primary" v-on:click="togglePage" v-else>
+            <i class="fa-solid fa-cart-shopping position-relative">
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                >{{cartItemCount}}</span
+              >
+            </i>
+            <span>&nbsp Checkout</span>
+          </button>
+        </div>
+      </header>
+      <main>
+        <div class="pageContainer">
+          <div class="row column-gap-5 row-gap-3" v-if="displayProduct">
+            <div
+              class="card column"
+              style="width: 18rem"
+              v-for="lesson in filteredLessons"
+            >
+              <img
+                class="card-img-top"
+                v-bind:src="lesson.image"
+                v-bind:alt="lesson.altImage"
+              />
+              <div class="card-body">
+                <h5 class="card-title">{{lesson.title}}</h5>
+                <p class="card-text">{{lesson.description}}</p>
+                <p class="card-text">Fees: &#163;{{lesson.price}}</p>
+                <p class="card-text">Location: {{lesson.location}}</p>
+                <p class="card-text">Available: {{lesson.availability}}</p>
+                <button
+                  class="disabledBtn"
+                  disabled
+                  v-if="isAddToCartDisabled(lesson)"
+                >
+                  Add to Cart
+                </button>
+                <button
+                  class="btn btn-primary"
+                  v-on:click="addToCart(lesson)"
+                  v-else
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <h4>Welcome to Checkout Page</h4>
+            <div class="row column-gap-5 row-gap-3 mb-5">
+              <div
+                class="card column"
+                style="width: 18rem"
+                v-for="lesson in lessonsToCheckout"
+              >
+                <img
+                  class="card-img-top"
+                  v-bind:src="lesson.image"
+                  v-bind:alt="lesson.altImage"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">{{lesson.title}}</h5>
+                  <p class="card-text">{{lesson.description}}</p>
+                  <p class="card-text">Fees: {{lesson.price}}</p>
+                  <p class="card-text">Location: {{lesson.location}}</p>
+                  <p class="card-text">Available: {{lesson.availability}}</p>
+                  <button
+                    class="btn btn-danger"
+                    v-on:click="removeFromCart(lesson)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="mb-5">
+              <h6>Enter checkout Information</h6>
+              <div class="col-md-6">
+                <strong>Name:</strong>
+                <input v-model="order.name" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <strong>Phone number:</strong>
+                <input v-model="order.phoneNumber" class="form-control" />
+              </div>
+            </div>
+            <div>
+              <h6>Confirm checkout Information</h6>
+              <div class="col-md-6 mb-3">
+                <div class="mb-3">
+                  <strong>Name: </strong>
+                  <span>{{order.name}}</span>
+                </div>
+                <div>
+                  <strong>Phone number: </strong>
+                  <span>{{order.phoneNumber}}</span>
+                </div>
+              </div>
+              <button
+                class="disabledBtn"
+                v-on:click="placeOrder"
+                v-if="isOrderBtnDisabled"
+                disabled
+              >
+                Confirm
+              </button>
+              <button class="btn btn-primary" v-on:click="placeOrder" v-else>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script>
+      let webstore = new Vue({
+        el: "#app",
+        data: {
+          cart: [],
+          displayProduct: true,
+          order: {
+            name: "",
+            phoneNumber: "",
+          },
+          lessons: [],
+          sortCategory: "title",
+          searchTerm: "",
+        },
+        created: function () {
+          fetch("http://localhost:3000/lessons").then(function (response) {
+            response.json().then(function (json) {
+              webstore.lessons = json;
+              console.log(json);
+            });
+          });
+        },
+        methods: {
+          isAddToCartDisabled(aLesson) {
+            return aLesson.availability == 0;
+          },
+          addToCart(aLesson) {
+            aLesson.availability--;
+            this.cart.push(aLesson.id);
+          },
+          togglePage() {
+            this.displayProduct = !this.displayProduct;
+          },
+          sortAscending() {
+            const categoryToSort = this.sortCategory;
+            const lessonsArray = this.lessons.slice(0);
+            function compareString(a, b) {
+              if (
+                a[categoryToSort].toLowerCase() <
+                b[categoryToSort].toLowerCase()
+              ) {
+                return -1;
+              }
+              if (
+                a[categoryToSort].toLowerCase() >
+                b[categoryToSort].toLowerCase()
+              ) {
+                return 1;
+              }
+              return 0;
+            }
+            function compareNumber(a, b) {
+              if (a[categoryToSort] < b[categoryToSort]) {
+                return -1;
+              }
+              if (a[categoryToSort] > b[categoryToSort]) {
+                return 1;
+              }
+              return 0;
+            }
+            if (categoryToSort === "title" || categoryToSort === "location") {
+              this.lessons = lessonsArray.sort(compareString);
+            } else {
+              this.lessons = lessonsArray.sort(compareNumber);
+            }
+          },
+          sortDescending() {
+            const categoryToSort = this.sortCategory;
+            const lessonsArray = this.lessons.slice(0);
+            function compareString(a, b) {
+              if (
+                a[categoryToSort].toLowerCase() >
+                b[categoryToSort].toLowerCase()
+              ) {
+                return -1;
+              }
+              if (
+                a[categoryToSort].toLowerCase() <
+                b[categoryToSort].toLowerCase()
+              ) {
+                return 1;
+              }
+              return 0;
+            }
+            function compareNumber(a, b) {
+              if (a[categoryToSort] > b[categoryToSort]) {
+                return -1;
+              }
+              if (a[categoryToSort] < b[categoryToSort]) {
+                return 1;
+              }
+              return 0;
+            }
+            if (categoryToSort === "title" || categoryToSort === "location") {
+              this.lessons = lessonsArray.sort(compareString);
+            } else {
+              this.lessons = lessonsArray.sort(compareNumber);
+            }
+          },
+          removeFromCart(aLesson) {
+            const lessonIdToRemove = this.cart.find((elem) => {
+              return elem === aLesson.id;
+            });
+            const lessonIndexToRemove = this.cart.indexOf(lessonIdToRemove);
+            this.cart.splice(lessonIndexToRemove, 1);
+            this.lessons.forEach((elem) => {
+              if (elem.id === lessonIdToRemove) {
+                elem.availability++;
+              }
+            });
+            if (this.cart.length === 0) {
+              this.displayProduct = true;
+            }
+          },
+          placeOrder() {
+            alert("Congratulations! Your Purchase is Successful.");
+          },
+        },
+        computed: {
+          cartItemCount() {
+            return this.cart.length || "";
+          },
+          isCheckoutDisabled() {
+            return this.cart.length == 0;
+          },
+          lessonsToCheckout() {
+            const lessonsToCheckout = [];
+            this.lessons.forEach((lesson) =>
+              this.cart.forEach((element) => {
+                if (lesson.id === element) {
+                  lessonsToCheckout.push(lesson);
+                }
+              })
+            );
+            return lessonsToCheckout;
+          },
+          filteredLessons() {
+            const filteredLessons = this.lessons.filter((elem) => {
+              return (
+                elem.title
+                  .toLowerCase()
+                  .includes(this.searchTerm.toLowerCase()) ||
+                elem.location
+                  .toLowerCase()
+                  .includes(this.searchTerm.toLowerCase())
+              );
+            });
+            return filteredLessons;
+          },
+          isOrderBtnDisabled() {
+            const validText = /^[a-zA-Z]+$/;
+            const validNumber = /^[0-9]+$/;
+            if (
+              this.order.name.length === 0 ||
+              this.order.phoneNumber.length === 0
+            ) {
+              return true;
+            }
+            if (
+              !validText.test(this.order.name) ||
+              !validNumber.test(this.order.phoneNumber)
+            ) {
+              return true;
+            }
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
