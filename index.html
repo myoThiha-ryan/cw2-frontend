@@ -333,6 +333,16 @@
               this.lessons = lessonsArray.sort(compareNumber);
             }
           },
+          filteredLessons() {
+            fetch(
+              `http://localhost:3000/search?searchTerm=${webstore.searchTerm}`
+            ).then(function (response) {
+              response.json().then(function (json) {
+                webstore.lessons = json;
+                console.log(json);
+              });
+            });
+          },
           removeFromCart(aLesson) {
             const lessonIdToRemove = this.cart.find((elem) => {
               return elem === aLesson.id;
