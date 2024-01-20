@@ -96,7 +96,7 @@
               Ascending Order
             </button>
             <button class="btn btn-primary" v-on:click="sortDescending">
-              Decending Order
+              Descending Order
             </button>
           </div>
         </div>
@@ -140,7 +140,7 @@
             >
               <img
                 class="card-img-top"
-                v-bind:src="lesson.image"
+                v-bind:src="'http://localhost:3000/' + lesson.image"
                 v-bind:alt="lesson.altImage"
               />
               <div class="card-body">
@@ -176,7 +176,7 @@
               >
                 <img
                   class="card-img-top"
-                  v-bind:src="lesson.image"
+                  v-bind:src="'http://localhost:3000/' + lesson.image"
                   v-bind:alt="lesson.altImage"
                 />
                 <div class="card-body">
@@ -243,6 +243,8 @@
             name: "",
             phoneNumber: "",
             orderedLessons: [],
+            lessonIds: [],
+            numberOfSpaces: {},
           },
           lessons: [],
           sortCategory: "title",
@@ -252,7 +254,6 @@
           fetch("http://localhost:3000/lessons").then(function (response) {
             response.json().then(function (json) {
               webstore.lessons = json;
-              console.log(json);
             });
           });
         },
@@ -339,7 +340,6 @@
             ).then(function (response) {
               response.json().then(function (json) {
                 webstore.lessons = json;
-                console.log(json);
               });
             });
           },
@@ -394,6 +394,7 @@
           },
           lessonsToCheckout() {
             const lessonsToCheckout = [];
+            /* filtering lesson objects from lessons array that are to checkout*/
             this.lessons.forEach((lesson) =>
               this.cart.forEach((element) => {
                 if (lesson.id === element) {
@@ -402,6 +403,20 @@
               })
             );
             this.order.orderedLessons = lessonsToCheckout;
+            /* filtering lessons ids that are to checkout */
+            const lessonIdsToCheckout = lessonsToCheckout.filter(
+              (lesson, index) =>
+                lessonsToCheckout.findIndex((item) => item.id === lesson.id) ===
+                index
+            );
+            lessonIdsToCheckout.forEach((lesson) => {
+              this.order.lessonIds.push(lesson.id);
+            });
+            /* counting total number of specific lessons that are to checkout */
+            lessonsToCheckout.forEach((lesson) => {
+              this.order.numberOfSpaces[lesson.title] =
+                (this.order.numberOfSpaces[lesson.title] || 0) + 1;
+            });
             return lessonsToCheckout;
           },
           isOrderBtnDisabled() {
