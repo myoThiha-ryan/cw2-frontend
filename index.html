@@ -105,6 +105,7 @@
             type="text"
             class="form-control"
             placeholder="Search..."
+            v-on:keyup="filteredLessons"
             v-model="searchTerm"
           />
         </div>
@@ -135,7 +136,7 @@
             <div
               class="card column"
               style="width: 18rem"
-              v-for="lesson in filteredLessons"
+              v-for="lesson in lessons"
             >
               <img
                 class="card-img-top"
@@ -241,6 +242,7 @@
           order: {
             name: "",
             phoneNumber: "",
+            orderedLessons: [],
           },
           lessons: [],
           sortCategory: "title",
@@ -347,7 +349,30 @@
             }
           },
           placeOrder() {
+            fetch("http://localhost:3000/orders", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(webstore.order),
+            }).then(function (response) {
+              response.json().then(function (json) {
+                console.log(json);
+              });
+            });
             alert("Congratulations! Your Purchase is Successful.");
+            fetch("http://localhost:3000/lessons", {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(webstore.order.orderedLessons),
+            }).then(function (response) {
+              response.json().then(function (json) {
+                console.log(json);
+              });
+            });
+            window.location.href = "/frontend/index.html";
           },
         },
         computed: {
@@ -366,20 +391,8 @@
                 }
               })
             );
+            this.order.orderedLessons = lessonsToCheckout;
             return lessonsToCheckout;
-          },
-          filteredLessons() {
-            const filteredLessons = this.lessons.filter((elem) => {
-              return (
-                elem.title
-                  .toLowerCase()
-                  .includes(this.searchTerm.toLowerCase()) ||
-                elem.location
-                  .toLowerCase()
-                  .includes(this.searchTerm.toLowerCase())
-              );
-            });
-            return filteredLessons;
           },
           isOrderBtnDisabled() {
             const validText = /^[a-zA-Z]+$/;
