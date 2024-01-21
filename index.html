@@ -140,7 +140,7 @@
             >
               <img
                 class="card-img-top"
-                v-bind:src="'http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/' + lesson.image"
+                v-bind:src="'https://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/' + lesson.image"
                 v-bind:alt="lesson.altImage"
               />
               <div class="card-body">
@@ -176,7 +176,7 @@
               >
                 <img
                   class="card-img-top"
-                  v-bind:src="'http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/' + lesson.image"
+                  v-bind:src="'https://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/' + lesson.image"
                   v-bind:alt="lesson.altImage"
                 />
                 <div class="card-body">
@@ -252,7 +252,7 @@
         },
         created: function () {
           fetch(
-            "http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/lessons"
+            "https://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/lessons"
           ).then(function (response) {
             response.json().then(function (json) {
               webstore.lessons = json;
@@ -338,7 +338,7 @@
           },
           filteredLessons() {
             fetch(
-              `http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/search?searchTerm=${webstore.searchTerm}`
+              `https://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/search?searchTerm=${webstore.searchTerm}`
             ).then(function (response) {
               response.json().then(function (json) {
                 webstore.lessons = json;
@@ -362,7 +362,7 @@
           },
           placeOrder() {
             fetch(
-              "http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/orders",
+              "https://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/orders",
               {
                 method: "POST",
                 headers: {
@@ -376,7 +376,7 @@
               });
             });
             fetch(
-              "http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/lessons",
+              "https://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/lessons",
               {
                 method: "PUT",
                 headers: {
