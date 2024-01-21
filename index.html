@@ -140,7 +140,7 @@
             >
               <img
                 class="card-img-top"
-                v-bind:src="'http://localhost:3000/' + lesson.image"
+                v-bind:src="'http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/' + lesson.image"
                 v-bind:alt="lesson.altImage"
               />
               <div class="card-body">
@@ -176,7 +176,7 @@
               >
                 <img
                   class="card-img-top"
-                  v-bind:src="'http://localhost:3000/' + lesson.image"
+                  v-bind:src="'http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/' + lesson.image"
                   v-bind:alt="lesson.altImage"
                 />
                 <div class="card-body">
@@ -251,7 +251,9 @@
           searchTerm: "",
         },
         created: function () {
-          fetch("http://localhost:3000/lessons").then(function (response) {
+          fetch(
+            "http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/lessons"
+          ).then(function (response) {
             response.json().then(function (json) {
               webstore.lessons = json;
             });
@@ -336,7 +338,7 @@
           },
           filteredLessons() {
             fetch(
-              `http://localhost:3000/search?searchTerm=${webstore.searchTerm}`
+              `http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/search?searchTerm=${webstore.searchTerm}`
             ).then(function (response) {
               response.json().then(function (json) {
                 webstore.lessons = json;
@@ -359,30 +361,36 @@
             }
           },
           placeOrder() {
-            fetch("http://localhost:3000/orders", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(webstore.order),
-            }).then(function (response) {
+            fetch(
+              "http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/orders",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(webstore.order),
+              }
+            ).then(function (response) {
+              response.json().then(function (json) {
+                console.log(json);
+              });
+            });
+            fetch(
+              "http://cw2afterschoolapp-env.eba-4rnh2pp6.eu-west-2.elasticbeanstalk.com/lessons",
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(webstore.order.orderedLessons),
+              }
+            ).then(function (response) {
               response.json().then(function (json) {
                 console.log(json);
               });
             });
             alert("Congratulations! Your Purchase is Successful.");
-            fetch("http://localhost:3000/lessons", {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(webstore.order.orderedLessons),
-            }).then(function (response) {
-              response.json().then(function (json) {
-                console.log(json);
-              });
-            });
-            window.location.href = "/frontend/index.html";
+            window.location = "/frontend/index.html";
           },
         },
         computed: {
